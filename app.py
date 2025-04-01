@@ -120,8 +120,18 @@ recommendations = {
 
 
 if uploaded_file:
-    image = Image.open(uploaded_file).convert("RGB")
-    st.image(image, caption='Uploaded Image', use_container_width=True)
+    try:
+        image = Image.open(uploaded_file).convert("RGB")
+
+        # Resize large images to max 1024x1024 to avoid memory issues
+        MAX_SIZE = (1024, 1024)
+        image.thumbnail(MAX_SIZE)
+
+        st.image(image, caption='Uploaded Image', use_container_width=True)
+    except Exception as e:
+        st.error(f"❌ Failed to load image: {e}")
+        st.stop()
+
 
     with st.spinner('Analyzing your face...'):
         img_array = np.array(image)
