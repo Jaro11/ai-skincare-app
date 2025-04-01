@@ -1,26 +1,10 @@
-streamlit
-deepface
-opencv-python-headless
-numpy
-Pillow
-tensorflow==2.11.0
-keras==2.11.0
-matplotlib
-pandas
-tqdm
-gdown
-Flask
-mtcnn
-retina-face
-fire
-gunicorn
-six
-termcolor
-Werkzeug
-Jinja2
-itsdangerous
-click
-blinker
-filelock
-requests
-requests-oauthlib
+  streamlit==1.31.1
+  deepface==0.0.83
+  tensorflow==2.11.0
+  keras==2.11.0
+  opencv-python-headless==4.8.0.76
+  numpy==1.23.5
+  pillow==9.5.0
+  deepface==0.0.83
+
+
