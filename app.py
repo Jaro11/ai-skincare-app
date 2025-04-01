@@ -127,7 +127,7 @@ if uploaded_file:
         MAX_SIZE = (1024, 1024)
         image.thumbnail(MAX_SIZE)
 
-        st.image(image, caption='Uploaded Image', use_container_width=True)
+        st.image(image, caption='Uploaded Image', use_column_width=True)
     except Exception as e:
         st.error(f"❌ Failed to load image: {e}")
         st.stop()
