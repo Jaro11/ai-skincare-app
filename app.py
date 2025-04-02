@@ -9,11 +9,14 @@ st.title("🧴 AI Skincare Advisor")
 st.write("Upload a photo to receive personalized skincare recommendations and lifestyle tips!")
 
 # Show mobile/desktop guidance
-user_agent = st.experimental_user_agent()
+from streamlit_js_eval import get_user_agent
+
+user_agent = get_user_agent()
 if user_agent and "mobile" in user_agent.lower():
     st.info("📱 You’re on a phone – take a selfie now to get skincare advice.")
 else:
     st.info("💻 You’re on a desktop – please upload a clear photo of your face.")
+
 
 uploaded_file = st.file_uploader("Upload your face photo", type=["jpg", "png", "jpeg"])
 
@@ -184,4 +187,3 @@ if uploaded_file:
 
 st.markdown("---")
 st.markdown("© 2024 Jaroslav Sidor. All rights reserved.")
-
