@@ -2,6 +2,8 @@ import streamlit as st
 from PIL import Image, ImageOps
 import numpy as np
 from deepface import DeepFace
+from streamlit_js_eval import get_user_agent
+
 
 st.set_page_config(page_title="AI Skincare Advisor", layout="centered")
 
@@ -9,8 +11,6 @@ st.title("🧴 AI Skincare Advisor")
 st.write("Upload a photo to receive personalized skincare recommendations and lifestyle tips!")
 
 # Show mobile/desktop guidance
-from streamlit_js_eval import get_user_agent
-
 user_agent = get_user_agent()
 if user_agent and "mobile" in user_agent.lower():
     st.info("📱 You’re on a phone – take a selfie now to get skincare advice.")
