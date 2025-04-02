@@ -1,5 +1,5 @@
 import streamlit as st
-from PIL import Image
+from PIL import Image, ImageOps
 import numpy as np
 from deepface import DeepFace
 
@@ -7,6 +7,13 @@ st.set_page_config(page_title="AI Skincare Advisor", layout="centered")
 
 st.title("🧴 AI Skincare Advisor")
 st.write("Upload a photo to receive personalized skincare recommendations and lifestyle tips!")
+
+# Show mobile/desktop guidance
+user_agent = st.experimental_user_agent()
+if user_agent and "mobile" in user_agent.lower():
+    st.info("📱 You’re on a phone – take a selfie now to get skincare advice.")
+else:
+    st.info("💻 You’re on a desktop – please upload a clear photo of your face.")
 
 uploaded_file = st.file_uploader("Upload your face photo", type=["jpg", "png", "jpeg"])
 
@@ -118,20 +125,18 @@ recommendations = {
     },
 }
 
-
 if uploaded_file:
     try:
         image = Image.open(uploaded_file).convert("RGB")
+        image = ImageOps.exif_transpose(image)  # auto-rotate based on EXIF orientation
 
-        # Resize large images to max 1024x1024 to avoid memory issues
         MAX_SIZE = (1024, 1024)
         image.thumbnail(MAX_SIZE)
 
-        st.image(image, caption='Uploaded Image', use_column_width=True)
+        st.image(np.array(image), caption='Uploaded Image', use_column_width=True)
     except Exception as e:
         st.error(f"❌ Failed to load image: {e}")
         st.stop()
-
 
     with st.spinner('Analyzing your face...'):
         img_array = np.array(image)
@@ -179,3 +184,4 @@ if uploaded_file:
 
 st.markdown("---")
 st.markdown("© 2024 Jaroslav Sidor. All rights reserved.")
+
