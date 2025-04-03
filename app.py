@@ -123,7 +123,7 @@ if uploaded_file:
         image = Image.open(uploaded_file).convert("RGB")
         image = ImageOps.exif_transpose(image)
 
-        MAX_SIZE = (1024, 1024)
+        MAX_SIZE = (512, 512)
         image.thumbnail(MAX_SIZE)
 
         st.image(np.array(image), caption='Uploaded Image')
