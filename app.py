@@ -2,25 +2,15 @@ import streamlit as st
 from PIL import Image, ImageOps
 import numpy as np
 from deepface import DeepFace
-from streamlit_js_eval import get_user_agent
-
 
 st.set_page_config(page_title="AI Skincare Advisor", layout="centered")
 
 st.title("🧴 AI Skincare Advisor")
 st.write("Upload a photo to receive personalized skincare recommendations and lifestyle tips!")
 
-# Show mobile/desktop guidance
-user_agent = get_user_agent()
-if user_agent and "mobile" in user_agent.lower():
-    st.info("📱 You’re on a phone – take a selfie now to get skincare advice.")
-else:
-    st.info("💻 You’re on a desktop – please upload a clear photo of your face.")
+uploaded_file = st.file_uploader("📷 Upload your face photo", type=["jpg", "png", "jpeg"])
 
-
-uploaded_file = st.file_uploader("Upload your face photo", type=["jpg", "png", "jpeg"])
-
-# Skincare Recommendations and Lifestyle Changes Table (Complete with real links)
+# Skincare Recommendations and Lifestyle Changes Table
 recommendations = {
     ('<25', 'Any', 'Any', 'Tired'): {
         'skin_condition': 'Fatigue-related Acne',
@@ -131,12 +121,12 @@ recommendations = {
 if uploaded_file:
     try:
         image = Image.open(uploaded_file).convert("RGB")
-        image = ImageOps.exif_transpose(image)  # auto-rotate based on EXIF orientation
+        image = ImageOps.exif_transpose(image)
 
         MAX_SIZE = (1024, 1024)
         image.thumbnail(MAX_SIZE)
 
-        st.image(np.array(image), caption='Uploaded Image', use_column_width=True)
+        st.image(np.array(image), caption='Uploaded Image', use_container_width=True)
     except Exception as e:
         st.error(f"❌ Failed to load image: {e}")
         st.stop()
