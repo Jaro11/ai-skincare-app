@@ -10,7 +10,7 @@ st.write("Upload a photo to receive personalized skincare recommendations and li
 
 uploaded_file = st.file_uploader("📷 Upload your face photo", type=["jpg", "png", "jpeg"])
 
-# Skincare Recommendations and Lifestyle Changes Table
+# --- SKINCARE RECOMMENDATIONS TABLE ---
 recommendations = {
     ('<25', 'Any', 'Any', 'Tired'): {
         'skin_condition': 'Fatigue-related Acne',
@@ -118,35 +118,51 @@ recommendations = {
     },
 }
 
+# --- MAIN LOGIC ---
 if uploaded_file:
     try:
+        # Load and process image
         image = Image.open(uploaded_file).convert("RGB")
         image = ImageOps.exif_transpose(image)
 
-        MAX_SIZE = (512, 512)
-        image.thumbnail(MAX_SIZE)
+        # Show user-friendly thumbnail
+        image.thumbnail((512, 512))
+        st.image(image, caption='Uploaded Image')
 
-        st.image(np.array(image), caption='Uploaded Image')
+        # Prepare resized image for DeepFace (224x224)
+        img_array = np.array(image.resize((224, 224)))
+
     except Exception as e:
         st.error(f"❌ Failed to load image: {e}")
         st.stop()
 
+    # Analyze face
     with st.spinner('Analyzing your face...'):
-        img_array = np.array(image)
-        analysis = DeepFace.analyze(img_array, actions=['age', 'gender', 'emotion', 'race'], enforce_detection=False)[0]
+        try:
+            analysis = DeepFace.analyze(
+                img_array,
+                actions=['age', 'gender', 'emotion', 'race'],
+                enforce_detection=False,
+                detector_backend='skip'
+            )[0]
 
-        age = analysis['age']
-        gender = analysis['dominant_gender'].capitalize()
-        emotion_raw = analysis['dominant_emotion'].lower()
-        race = analysis['dominant_race'].capitalize()
+            age = analysis['age']
+            gender = analysis['dominant_gender'].capitalize()
+            emotion_raw = analysis['dominant_emotion'].lower()
+            race = analysis['dominant_race'].capitalize()
 
+        except Exception as e:
+            st.error(f"❌ Face analysis failed: {e}")
+            st.stop()
+
+        # Map emotion to simplified terms
         emotion_map = {
             'sad': 'Sad', 'angry': 'Stressed', 'fear': 'Anxious',
             'disgust': 'Anxious', 'happy': 'Happy', 'surprise': 'Happy',
             'neutral': 'Neutral', 'tired': 'Tired', 'fatigue': 'Tired'
         }
-
         emotion = emotion_map.get(emotion_raw, 'Neutral')
+
         age_group = '<25' if age < 25 else '25-40' if age <= 40 else '40+'
 
         keys = [
@@ -161,6 +177,7 @@ if uploaded_file:
 
         rec = next((recommendations[k] for k in keys if k in recommendations), recommendations[('Any', 'Any', 'Any', 'Neutral')])
 
+    # --- OUTPUT ---
     st.success(f"**Detected Condition:** {rec['skin_condition']}")
     st.info(f"Age: {age}, Gender: {gender}, Race: {race}, Mood: {emotion}")
 
@@ -176,4 +193,4 @@ if uploaded_file:
     st.markdown("🛒 *Affiliate links included.*")
 
 st.markdown("---")
-st.markdown("© 2024 Jaroslav Sidor. All rights reserved.")
+st.markdown("© 2025 Jaroslav Sidor. All rights reserved.")
