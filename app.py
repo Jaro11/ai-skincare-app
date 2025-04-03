@@ -133,12 +133,15 @@ if uploaded_file:
 
     with st.spinner('Analyzing your face...'):
         img_array = np.array(image)
-        analysis = DeepFace.analyze(img_array, actions=['age', 'gender', 'emotion', 'race'], enforce_detection=False)
+        analysis_age = DeepFace.analyze(img_array, actions=['age'], enforce_detection=False)[0]
+        analysis_gender = DeepFace.analyze(img_array, actions=['gender'], enforce_detection=False)[0]
+        analysis_emotion = DeepFace.analyze(img_array, actions=['emotion'], enforce_detection=False)[0]
+        analysis_race = DeepFace.analyze(img_array, actions=['race'], enforce_detection=False)[0]
 
-        age = analysis[0]['age']
-        gender = analysis[0]['dominant_gender'].capitalize()
-        race = analysis[0]['dominant_race'].capitalize()
-        emotion_raw = analysis[0]['dominant_emotion'].lower()
+        age = analysis_age['age']
+        gender = analysis_gender['dominant_gender'].capitalize()
+        emotion_raw = analysis_emotion['dominant_emotion'].lower()
+        race = analysis_race['dominant_race'].capitalize()
 
         emotion_map = {
             'sad': 'Sad', 'angry': 'Stressed', 'fear': 'Anxious',
