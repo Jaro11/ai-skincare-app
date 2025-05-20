@@ -2,6 +2,7 @@ import streamlit as st
 from PIL import Image
 import numpy as np
 from deepface import DeepFace
+import threading
 
 st.set_page_config(page_title="AI Skincare Advisor", layout="centered")
 
@@ -9,6 +10,16 @@ st.title("🧴 AI Skincare Advisor")
 st.write("Upload a photo to receive personalized skincare recommendations and lifestyle tips!")
 
 uploaded_file = st.file_uploader("Upload your face photo", type=["jpg", "png", "jpeg"])
+
+# Thread lock to serialize DeepFace calls
+face_analysis_lock = threading.Lock()
+
+# Cache the model loading to avoid reloading on each request
+@st.cache_resource(show_spinner=False)
+def load_deepface_model():
+    return DeepFace.build_model("VGG-Face"), DeepFace.build_model("Facenet"), DeepFace.build_model("OpenFace"), DeepFace.build_model("DeepFace"), DeepFace.build_model("ArcFace")
+
+models = load_deepface_model()
 
 # Skincare Recommendations and Lifestyle Changes Table (Complete with real links)
 recommendations = {
@@ -118,14 +129,14 @@ recommendations = {
     },
 }
 
-
 if uploaded_file:
     image = Image.open(uploaded_file)
     st.image(image, caption='Uploaded Image', use_container_width=True)
 
     with st.spinner('Analyzing your face...'):
         img_array = np.array(image)
-        analysis = DeepFace.analyze(img_array, actions=['age', 'gender', 'emotion', 'race'], enforce_detection=False)
+        with face_analysis_lock:
+            analysis = DeepFace.analyze(img_array, actions=['age', 'gender', 'emotion', 'race'], enforce_detection=False)
 
         age = analysis[0]['age']
         gender = analysis[0]['dominant_gender'].capitalize()
