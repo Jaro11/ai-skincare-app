@@ -4,9 +4,9 @@ import numpy as np
 from deepface import DeepFace
 import threading
 
-st.set_page_config(page_title="AI Skincare Advisor", layout="centered")
+st.set_page_config(page_title="Get glow mind", layout="centered")
 
-st.title("🧴 AI Skincare Advisor")
+st.title("🧴 GetGlowMind - AI Skincare advisor")
 st.write("Upload a photo to receive personalized skincare recommendations and lifestyle tips!")
 
 uploaded_file = st.file_uploader("Upload your face photo", type=["jpg", "png", "jpeg"])
